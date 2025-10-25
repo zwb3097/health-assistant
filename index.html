@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -13,12 +15,9 @@
       theme: {
         extend: {
           colors: {
-            primary: '#10B981', // 健康绿作为主色调
-            secondary: '#D1FAE5', // 浅绿作为辅助色
-            accent: '#059669',    // 深绿作为强调色
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
+            primary: '#10B981',
+            secondary: '#D1FAE5',
+            accent: '#059669',
           },
         },
       }
@@ -31,34 +30,14 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
-      .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-      }
-      .message-in {
-        animation: slideInLeft 0.3s ease-out;
-      }
-      .message-out {
-        animation: slideInRight 0.3s ease-out;
-      }
-      .pulse-light {
-        animation: pulseLight 2s infinite;
-      }
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .message-in { animation: slideInLeft 0.3s ease-out; }
+      .message-out { animation: slideInRight 0.3s ease-out; }
+      .pulse-light { animation: pulseLight 2s infinite; }
     }
-    
-    @keyframes slideInLeft {
-      from { transform: translateX(-10px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideInRight {
-      from { transform: translateX(10px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes pulseLight {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
+    @keyframes slideInLeft { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes pulseLight { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
@@ -71,14 +50,9 @@
         </div>
         <h1 class="text-xl font-bold text-gray-800">健康助手</h1>
       </div>
-      <div class="flex items-center gap-3">
-        <button id="emergencyBtn" class="text-red-500 hover:text-red-600 text-sm flex items-center gap-1">
-          <i class="fa fa-ambulance"></i> 紧急求助
-        </button>
-        <button id="settingsBtn" class="text-gray-500 hover:text-primary p-2">
-          <i class="fa fa-cog"></i>
-        </button>
-      </div>
+      <button id="emergencyBtn" class="text-red-500 hover:text-red-600 text-sm flex items-center gap-1">
+        <i class="fa fa-ambulance"></i> 紧急求助
+      </button>
     </div>
   </header>
 
@@ -120,7 +94,6 @@
         <div class="bg-white rounded-2xl rounded-tl-none p-4 max-w-[80%] shadow-sm border border-gray-100">
           <p>您好！我是健康助手AI，很高兴为您提供健康咨询服务。</p>
           <p class="mt-2">请描述您的症状、健康问题或需求，我会尽力为您提供专业建议。</p>
-          <p class="mt-2 text-sm text-gray-500">提示：请先在设置中配置您的智谱AI API密钥</p>
         </div>
       </div>
     </div>
@@ -170,7 +143,6 @@
           </div>
           <p class="text-sm text-red-600">其他紧急电话：匪警110 | 火警119</p>
         </div>
-        <p class="text-sm text-gray-500">注意：请清晰说明您的位置、症状和联系方式</p>
       </div>
       
       <button id="closeEmergency" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2.5 rounded-lg transition-colors">
@@ -179,57 +151,11 @@
     </div>
   </div>
 
-  <!-- 设置弹窗 -->
-  <div id="settingsModal" class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-white rounded-2xl shadow-lg w-full max-w-md mx-4 transform scale-95 transition-transform duration-300">
-      <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-        <h2 class="text-lg font-bold text-gray-800">健康助手设置</h2>
-        <button id="closeSettings" class="text-gray-500 hover:text-gray-700">
-          <i class="fa fa-times"></i>
-        </button>
-      </div>
-      
-      <div class="p-5 space-y-4">
-        <div>
-          <label for="apiKey" class="block text-sm font-medium text-gray-700 mb-1">智谱AI API密钥</label>
-          <input 
-            type="text" 
-            id="apiKey" 
-            placeholder="sk-..." 
-            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-          >
-          <p class="text-xs text-gray-500 mt-1">在<a href="https://open.bigmodel.cn/" target="_blank" class="text-primary hover:underline">智谱AI开放平台</a>获取</p>
-        </div>
-        
-        <div>
-          <label for="detailLevel" class="block text-sm font-medium text-gray-700 mb-1">建议详细程度</label>
-          <select id="detailLevel" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-            <option value="simple">简洁明了</option>
-            <option value="detailed" selected>详细全面</option>
-            <option value="professional">专业深入</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="p-5 border-t border-gray-200 flex justify-end">
-        <button id="saveSettings" class="bg-primary hover:bg-accent text-white px-5 py-2.5 rounded-full transition-all">
-          保存设置
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
     // DOM元素
     const chatContainer = document.getElementById('chatContainer');
     const chatForm = document.getElementById('chatForm');
     const messageInput = document.getElementById('messageInput');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsModal = document.getElementById('settingsModal');
-    const closeSettings = document.getElementById('closeSettings');
-    const saveSettings = document.getElementById('saveSettings');
-    const apiKeyInput = document.getElementById('apiKey');
-    const detailLevelSelect = document.getElementById('detailLevel');
     const emergencyBtn = document.getElementById('emergencyBtn');
     const emergencyModal = document.getElementById('emergencyModal');
     const closeEmergency = document.getElementById('closeEmergency');
@@ -237,92 +163,37 @@
     
     // 状态变量
     let isProcessing = false;
-    let chatHistory = []; // 聊天历史记录
-    
-    // 详细程度提示词映射
-    const detailPrompts = {
-      simple: "用简洁明了的语言给出建议，避免专业术语，控制在简短篇幅",
-      detailed: "提供全面详细的建议，适当解释原因，语言通俗易懂",
-      professional: "提供专业深入的分析和建议，可使用专业术语，内容详实"
-    };
-    
-    // 加载保存的设置
-    function loadSettings() {
-      const saved = localStorage.getItem('healthSettings');
-      if (saved) {
-        const { apiKey, detailLevel } = JSON.parse(saved);
-        apiKeyInput.value = apiKey || '';
-        detailLevelSelect.value = detailLevel || 'detailed';
-      }
-    }
-    
-    // 保存设置
-    function saveSettingsToStorage() {
-      const settings = {
-        apiKey: apiKeyInput.value,
-        detailLevel: detailLevelSelect.value
-      };
-      localStorage.setItem('healthSettings', JSON.stringify(settings));
-      
-      // 显示保存提示
-      addMessage("设置已保存，您可以开始咨询健康问题了。", false);
-      closeSettingsModal();
-    }
-    
-    // 打开设置弹窗
-    function openSettingsModal() {
-      settingsModal.classList.remove('opacity-0', 'pointer-events-none');
-      settingsModal.querySelector('div').classList.remove('scale-95');
-      settingsModal.querySelector('div').classList.add('scale-100');
-    }
-    
-    // 关闭设置弹窗
-    function closeSettingsModal() {
-      settingsModal.classList.add('opacity-0', 'pointer-events-none');
-      settingsModal.querySelector('div').classList.remove('scale-100');
-      settingsModal.querySelector('div').classList.add('scale-95');
-    }
-    
-    // 切换紧急求助弹窗
-    function toggleEmergencyModal(show) {
-      emergencyModal.classList.toggle('hidden', !show);
-    }
+    let chatHistory = [];
+    // 已更新为您提供的最新API密钥
+    const API_KEY = 'af76bb71da944559971aa52a302f80c5.uHqYFZjYOUo0NTqA';
     
     // 添加消息到聊天界面
     function addMessage(content, isUser) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `flex items-start gap-3 ${isUser ? 'message-out justify-end' : 'message-in'}`;
       
-      // 头像
       const avatar = document.createElement('div');
       avatar.className = isUser 
         ? 'w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center'
         : 'w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex-shrink-0 flex items-center justify-center';
       
-      avatar.innerHTML = isUser 
-        ? '<i class="fa fa-user text-gray-600"></i>'
-        : '<i class="fa fa-user-md text-white"></i>';
+      avatar.innerHTML = isUser ? '<i class="fa fa-user text-gray-600"></i>' : '<i class="fa fa-user-md text-white"></i>';
       
-      // 消息气泡
       const bubble = document.createElement('div');
       bubble.className = isUser
         ? 'bg-primary text-white rounded-2xl rounded-tr-none p-4 max-w-[80%] shadow-sm'
         : 'bg-white rounded-2xl rounded-tl-none p-4 max-w-[80%] shadow-sm border border-gray-100';
       
-      // 格式化消息（支持换行和列表）
-      let formattedContent = content
+      // 格式化消息内容
+      bubble.innerHTML = content
         .replace(/\n/g, '<br>')
         .replace(/\* (.*?)(?=\*|$)/g, '<li class="ml-4 list-disc">$1</li>')
         .replace(/<\/li><li/g, '</li><br><li');
       
-      // 检查是否有列表项，添加ul标签
-      if (formattedContent.includes('<li')) {
-        formattedContent = `<ul>${formattedContent}</ul>`;
+      if (bubble.innerHTML.includes('<li')) {
+        bubble.innerHTML = `<ul>${bubble.innerHTML}</ul>`;
       }
       
-      bubble.innerHTML = formattedContent;
-      
-      // 组装消息元素
       if (isUser) {
         messageDiv.appendChild(bubble);
         messageDiv.appendChild(avatar);
@@ -331,17 +202,12 @@
         messageDiv.appendChild(bubble);
       }
       
-      // 添加到聊天容器
       chatContainer.appendChild(messageDiv);
-      scrollToBottom();
-      
-      // 添加到历史记录
+      chatContainer.scrollTop = chatContainer.scrollHeight;
       chatHistory.push({ role: isUser ? 'user' : 'assistant', content });
       
-      // 限制历史记录长度（最多10轮对话）
-      if (chatHistory.length > 20) {
-        chatHistory = chatHistory.slice(-20);
-      }
+      // 限制历史记录长度
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
     }
     
     // 添加正在输入提示
@@ -364,7 +230,7 @@
       `;
       
       chatContainer.appendChild(typingDiv);
-      scrollToBottom();
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
     
     // 移除正在输入提示
@@ -373,27 +239,14 @@
       if (typing) typing.remove();
     }
     
-    // 滚动到底部
-    function scrollToBottom() {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-    
-    // 调用智谱AI API
-    async function sendToAI(message) {
-      const settings = JSON.parse(localStorage.getItem('healthSettings') || '{}');
-      
-      // 检查API密钥
-      if (!settings.apiKey) {
-        openSettingsModal();
-        return null;
-      }
-      
+    // 调用智谱AI API（使用最新密钥）
+    async function callZhipuAI(message) {
       try {
-        // 构建完整的消息列表，包含系统提示和历史记录
+        // 构建完整消息
         const messages = [
           { 
             role: 'system', 
-            content: `你是一位专业的健康顾问AI，${detailPrompts[settings.detailLevel]}。回答应包含：
+            content: `你是一位专业的健康顾问AI，提供全面详细的健康建议。回答应包含：
 1. 对问题的初步分析
 2. 实用建议或应对措施
 3. 明确的就医提示（说明哪些情况需要及时就医）
@@ -408,12 +261,12 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${settings.apiKey}`
+            'Authorization': `Bearer ${API_KEY}` // 使用最新API密钥
           },
           body: JSON.stringify({
             model: 'glm-4',
             messages: messages,
-            temperature: 0.6, // 较低的温度值，确保建议更可靠
+            temperature: 0.6,
             stream: false
           })
         });
@@ -427,7 +280,7 @@
         return data.choices[0].message.content;
       } catch (error) {
         console.error('API错误:', error);
-        return `抱歉，咨询过程中出现错误: ${error.message}。请检查API密钥设置或稍后再试。`;
+        return `抱歉，咨询过程中出现错误: ${error.message}。请稍后再试。`;
       }
     }
     
@@ -447,15 +300,16 @@
       
       // 设置处理状态
       isProcessing = true;
-      chatForm.querySelector('button').disabled = true;
-      chatForm.querySelector('button').classList.add('opacity-70', 'cursor-not-allowed');
+      const submitBtn = chatForm.querySelector('button');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
       
       // 显示正在输入
       addTypingIndicator();
       
       try {
         // 调用API
-        const reply = await sendToAI(message);
+        const reply = await callZhipuAI(message);
         
         // 移除输入提示
         removeTypingIndicator();
@@ -467,8 +321,8 @@
       } finally {
         // 重置状态
         isProcessing = false;
-        chatForm.querySelector('button').disabled = false;
-        chatForm.querySelector('button').classList.remove('opacity-70', 'cursor-not-allowed');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
       }
     }
     
@@ -491,7 +345,6 @@
             break;
         }
         messageInput.focus();
-        // 调整输入框高度
         messageInput.style.height = 'auto';
         messageInput.style.height = `${messageInput.scrollHeight}px`;
       });
@@ -499,21 +352,10 @@
     
     // 事件监听
     chatForm.addEventListener('submit', handleSendMessage);
-    
-    settingsBtn.addEventListener('click', openSettingsModal);
-    closeSettings.addEventListener('click', closeSettingsModal);
-    saveSettings.addEventListener('click', saveSettingsToStorage);
-    
-    emergencyBtn.addEventListener('click', () => toggleEmergencyModal(true));
-    closeEmergency.addEventListener('click', () => toggleEmergencyModal(false));
-    
-    // 点击弹窗外部关闭
-    settingsModal.addEventListener('click', (e) => {
-      if (e.target === settingsModal) closeSettingsModal();
-    });
-    
+    emergencyBtn.addEventListener('click', () => emergencyModal.classList.remove('hidden'));
+    closeEmergency.addEventListener('click', () => emergencyModal.classList.add('hidden'));
     emergencyModal.addEventListener('click', (e) => {
-      if (e.target === emergencyModal) toggleEmergencyModal(false);
+      if (e.target === emergencyModal) emergencyModal.classList.add('hidden');
     });
     
     // 输入框自动调整高度
@@ -529,7 +371,7 @@
       }
     });
     
-    // 按Enter发送消息（Shift+Enter换行）
+    // 按Enter发送消息
     messageInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -538,14 +380,7 @@
     });
     
     // 初始化
-    function init() {
-      loadSettings();
-      // 自动调整输入框高度
-      messageInput.style.height = `${messageInput.scrollHeight}px`;
-    }
-    
-    // 启动应用
-    init();
+    messageInput.style.height = `${messageInput.scrollHeight}px`;
   </script>
 </body>
 </html>
