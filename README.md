@@ -1,1 +1,385 @@
 # health-assistant
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>健康助手 - AI健康咨询</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#10B981',
+            secondary: '#D1FAE5',
+            accent: '#059669',
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .message-in { animation: slideInLeft 0.3s ease-out; }
+      .message-out { animation: slideInRight 0.3s ease-out; }
+      .pulse-light { animation: pulseLight 2s infinite; }
+    }
+    @keyframes slideInLeft { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes pulseLight { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+          <i class="fa fa-heartbeat text-white text-xl"></i>
+        </div>
+        <h1 class="text-xl font-bold text-gray-800">健康助手</h1>
+      </div>
+      <button id="emergencyBtn" class="text-red-500 hover:text-red-600 text-sm flex items-center gap-1">
+        <i class="fa fa-ambulance"></i> 紧急求助
+      </button>
+    </div>
+  </header>
+
+  <!-- 主要内容区 -->
+  <main class="max-w-2xl mx-auto px-4 py-6 flex-1 flex flex-col h-[calc(100vh-130px)]">
+    <!-- 提示条 -->
+    <div class="bg-secondary/70 border border-primary/20 text-accent text-sm rounded-lg p-3 mb-4 flex items-center gap-2">
+      <i class="fa fa-info-circle"></i>
+      <p>提示：本工具仅提供健康咨询和初步建议，不能替代专业医疗诊断。如有紧急情况，请立即就医。</p>
+    </div>
+    
+    <!-- 快捷咨询 -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+      <button class="quick-btn bg-white border border-gray-200 rounded-lg p-3 text-sm hover:border-primary hover:bg-secondary/30 transition-colors">
+        <i class="fa fa-stethoscope block text-center text-primary mb-1"></i>
+        症状咨询
+      </button>
+      <button class="quick-btn bg-white border border-gray-200 rounded-lg p-3 text-sm hover:border-primary hover:bg-secondary/30 transition-colors">
+        <i class="fa fa-cutlery block text-center text-primary mb-1"></i>
+        饮食建议
+      </button>
+      <button class="quick-btn bg-white border border-gray-200 rounded-lg p-3 text-sm hover:border-primary hover:bg-secondary/30 transition-colors">
+        <i class="fa fa-heart block text-center text-primary mb-1"></i>
+        运动指导
+      </button>
+      <button class="quick-btn bg-white border border-gray-200 rounded-lg p-3 text-sm hover:border-primary hover:bg-secondary/30 transition-colors">
+        <i class="fa fa-bed block text-center text-primary mb-1"></i>
+        睡眠改善
+      </button>
+    </div>
+
+    <!-- 消息容器 -->
+    <div id="chatContainer" class="flex-1 overflow-y-auto scrollbar-hide space-y-4 pb-4">
+      <!-- 欢迎消息 -->
+      <div class="flex items-start gap-3 message-in">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex-shrink-0 flex items-center justify-center">
+          <i class="fa fa-user-md text-white"></i>
+        </div>
+        <div class="bg-white rounded-2xl rounded-tl-none p-4 max-w-[80%] shadow-sm border border-gray-100">
+          <p>您好！我是健康助手AI，很高兴为您提供健康咨询服务。</p>
+          <p class="mt-2">请描述您的症状、健康问题或需求，我会尽力为您提供专业建议。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="mt-4 bg-white rounded-2xl shadow-sm p-3 border border-gray-100">
+      <form id="chatForm" class="flex flex-col gap-3">
+        <textarea 
+          id="messageInput" 
+          rows="2" 
+          placeholder="请描述您的症状或健康问题..." 
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-none transition-all"
+        ></textarea>
+        
+        <div class="flex justify-between items-center">
+          <div class="text-xs text-gray-500">
+            <i class="fa fa-shield mr-1"></i> 您的健康信息将被保密
+          </div>
+          <button 
+            type="submit" 
+            class="bg-primary hover:bg-accent text-white px-6 py-2.5 rounded-full flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-sm"
+          >
+            <span>咨询</span>
+            <i class="fa fa-paper-plane-o"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- 紧急求助弹窗 -->
+  <div id="emergencyModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+      <div class="text-center mb-4">
+        <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 mx-auto flex items-center justify-center mb-3">
+          <i class="fa fa-ambulance text-2xl"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800">紧急医疗求助</h2>
+      </div>
+      
+      <div class="space-y-4 mb-6">
+        <p class="text-gray-600">如遇以下紧急情况，请立即拨打急救电话：</p>
+        <div class="bg-red-50 border border-red-100 rounded-lg p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium text-red-700">全国统一急救电话</span>
+            <span class="text-2xl font-bold text-red-600">120</span>
+          </div>
+          <p class="text-sm text-red-600">其他紧急电话：匪警110 | 火警119</p>
+        </div>
+      </div>
+      
+      <button id="closeEmergency" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2.5 rounded-lg transition-colors">
+        我已知晓
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // DOM元素
+    const chatContainer = document.getElementById('chatContainer');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const emergencyBtn = document.getElementById('emergencyBtn');
+    const emergencyModal = document.getElementById('emergencyModal');
+    const closeEmergency = document.getElementById('closeEmergency');
+    const quickBtns = document.querySelectorAll('.quick-btn');
+    
+    // 状态变量
+    let isProcessing = false;
+    let chatHistory = [];
+    // 已更新为您提供的最新API密钥
+    const API_KEY = 'af76bb71da944559971aa52a302f80c5.uHqYFZjYOUo0NTqA';
+    
+    // 添加消息到聊天界面
+    function addMessage(content, isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start gap-3 ${isUser ? 'message-out justify-end' : 'message-in'}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = isUser 
+        ? 'w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center'
+        : 'w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex-shrink-0 flex items-center justify-center';
+      
+      avatar.innerHTML = isUser ? '<i class="fa fa-user text-gray-600"></i>' : '<i class="fa fa-user-md text-white"></i>';
+      
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'bg-primary text-white rounded-2xl rounded-tr-none p-4 max-w-[80%] shadow-sm'
+        : 'bg-white rounded-2xl rounded-tl-none p-4 max-w-[80%] shadow-sm border border-gray-100';
+      
+      // 格式化消息内容
+      bubble.innerHTML = content
+        .replace(/\n/g, '<br>')
+        .replace(/\* (.*?)(?=\*|$)/g, '<li class="ml-4 list-disc">$1</li>')
+        .replace(/<\/li><li/g, '</li><br><li');
+      
+      if (bubble.innerHTML.includes('<li')) {
+        bubble.innerHTML = `<ul>${bubble.innerHTML}</ul>`;
+      }
+      
+      if (isUser) {
+        messageDiv.appendChild(bubble);
+        messageDiv.appendChild(avatar);
+      } else {
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(bubble);
+      }
+      
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      chatHistory.push({ role: isUser ? 'user' : 'assistant', content });
+      
+      // 限制历史记录长度
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+    }
+    
+    // 添加正在输入提示
+    function addTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typingIndicator';
+      typingDiv.className = `flex items-start gap-3 message-in`;
+      
+      typingDiv.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex-shrink-0 flex items-center justify-center">
+          <i class="fa fa-user-md text-white"></i>
+        </div>
+        <div class="bg-white rounded-2xl rounded-tl-none p-4 max-w-[80%] shadow-sm border border-gray-100">
+          <div class="flex space-x-2">
+            <div class="w-2 h-2 rounded-full bg-gray-400 pulse-light"></div>
+            <div class="w-2 h-2 rounded-full bg-gray-400 pulse-light" style="animation-delay: 0.2s"></div>
+            <div class="w-2 h-2 rounded-full bg-gray-400 pulse-light" style="animation-delay: 0.4s"></div>
+          </div>
+        </div>
+      `;
+      
+      chatContainer.appendChild(typingDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // 移除正在输入提示
+    function removeTypingIndicator() {
+      const typing = document.getElementById('typingIndicator');
+      if (typing) typing.remove();
+    }
+    
+    // 调用智谱AI API（使用最新密钥）
+    async function callZhipuAI(message) {
+      try {
+        // 构建完整消息
+        const messages = [
+          { 
+            role: 'system', 
+            content: `你是一位专业的健康顾问AI，提供全面详细的健康建议。回答应包含：
+1. 对问题的初步分析
+2. 实用建议或应对措施
+3. 明确的就医提示（说明哪些情况需要及时就医）
+4. 免责声明："请注意，以上信息仅供参考，不能替代专业医疗诊断和治疗。"
+请用中文回复，语气专业且关怀。` 
+          },
+          ...chatHistory,
+          { role: 'user', content: message }
+        ];
+        
+        const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}` // 使用最新API密钥
+          },
+          body: JSON.stringify({
+            model: 'glm-4',
+            messages: messages,
+            temperature: 0.6,
+            stream: false
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.error?.message || `请求失败: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.choices[0].message.content;
+      } catch (error) {
+        console.error('API错误:', error);
+        return `抱歉，咨询过程中出现错误: ${error.message}。请稍后再试。`;
+      }
+    }
+    
+    // 处理发送消息
+    async function handleSendMessage(e) {
+      e.preventDefault();
+      
+      const message = messageInput.value.trim();
+      if (!message || isProcessing) return;
+      
+      // 清空输入框
+      messageInput.value = '';
+      messageInput.style.height = 'auto';
+      
+      // 添加用户消息
+      addMessage(message, true);
+      
+      // 设置处理状态
+      isProcessing = true;
+      const submitBtn = chatForm.querySelector('button');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+      
+      // 显示正在输入
+      addTypingIndicator();
+      
+      try {
+        // 调用API
+        const reply = await callZhipuAI(message);
+        
+        // 移除输入提示
+        removeTypingIndicator();
+        
+        // 添加回复
+        if (reply) {
+          addMessage(reply, false);
+        }
+      } finally {
+        // 重置状态
+        isProcessing = false;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+      }
+    }
+    
+    // 快捷按钮点击事件
+    quickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.textContent.trim();
+        switch(text) {
+          case '症状咨询':
+            messageInput.value = '我想咨询一些症状问题：';
+            break;
+          case '饮食建议':
+            messageInput.value = '请给我一些关于饮食健康的建议：';
+            break;
+          case '运动指导':
+            messageInput.value = '我需要一些适合我的运动指导：';
+            break;
+          case '睡眠改善':
+            messageInput.value = '我有睡眠方面的问题，希望得到改善建议：';
+            break;
+        }
+        messageInput.focus();
+        messageInput.style.height = 'auto';
+        messageInput.style.height = `${messageInput.scrollHeight}px`;
+      });
+    });
+    
+    // 事件监听
+    chatForm.addEventListener('submit', handleSendMessage);
+    emergencyBtn.addEventListener('click', () => emergencyModal.classList.remove('hidden'));
+    closeEmergency.addEventListener('click', () => emergencyModal.classList.add('hidden'));
+    emergencyModal.addEventListener('click', (e) => {
+      if (e.target === emergencyModal) emergencyModal.classList.add('hidden');
+    });
+    
+    // 输入框自动调整高度
+    messageInput.addEventListener('input', () => {
+      messageInput.style.height = 'auto';
+      const maxHeight = 150;
+      if (messageInput.scrollHeight > maxHeight) {
+        messageInput.style.height = `${maxHeight}px`;
+        messageInput.style.overflowY = 'auto';
+      } else {
+        messageInput.style.height = `${messageInput.scrollHeight}px`;
+        messageInput.style.overflowY = 'hidden';
+      }
+    });
+    
+    // 按Enter发送消息
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatForm.dispatchEvent(new Event('submit'));
+      }
+    });
+    
+    // 初始化
+    messageInput.style.height = `${messageInput.scrollHeight}px`;
+  </script>
+</body>
+</html>
